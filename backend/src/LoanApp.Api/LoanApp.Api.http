@@ -1,0 +1,44 @@
+# Requests to exercise the API while debugging (Visual Studio / Rider / VS Code REST Client).
+# Run the API with the "http" profile; the external service mock must be up (docker compose up -d external-service).
+
+@api = http://localhost:5080
+@mock = http://localhost:4000
+@ssn = 345-67-8901
+
+### 1. Submit an application (first time = create, again with the same SSN = update)
+POST {{api}}/api/applications
+Content-Type: application/json
+
+{
+  "firstName": "Ann",
+  "lastName": "Lee",
+  "ssn": "{{ssn}}",
+  "companyName": "Acme",
+  "requestedAmount": 25000,
+  "street": "1 Main St",
+  "city": "Austin",
+  "state": "TX",
+  "zipCode": "78701"
+}
+
+### 2. Make the external service fail the next N calls (transient 500s)
+POST {{mock}}/admin/fail?count=10
+
+### 3. Delivery status: pending, dead-lettered, oldest pending age
+GET {{api}}/api/operations/events/status
+
+### 4. Dead letters (copy an "id" for request 5)
+GET {{api}}/api/operations/events/dead-letters
+
+### 5. Requeue one dead letter
+@deadLetterId = 1
+POST {{api}}/api/operations/events/dead-letters/{{deadLetterId}}/requeue
+
+### 6. Requeue every dead letter
+POST {{api}}/api/operations/events/dead-letters/requeue
+
+### 7. Health: Degraded while there are dead letters
+GET {{api}}/health
+
+### 8. What the external service received
+GET {{mock}}/customers

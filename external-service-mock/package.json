@@ -1,0 +1,8 @@
+{
+  "name": "external-service-mock",
+  "private": true,
+  "description": "Mock of the external customer service",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
