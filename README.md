@@ -1,6 +1,6 @@
 # Loan Application
 
-> 🎥 **Video walkthrough:** _TODO: add the public Loom link here._
+> 🎥 **Video walkthrough: https://streamable.com/e/b6opjl?
 
 A small loan application flow: a Next.js form → a .NET API that runs a rule engine → approved applications are saved in SQL Server → background workers send them to an external (mock) service over HTTP.
 
